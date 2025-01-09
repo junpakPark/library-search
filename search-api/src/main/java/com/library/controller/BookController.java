@@ -1,6 +1,6 @@
 package com.library.controller;
 
-import com.library.service.BookQueryService;
+import com.library.service.BookApplicationService;
 import com.library.service.dto.PageResult;
 import com.library.service.dto.request.SearchCondition;
 import com.library.service.dto.response.SearchResponse;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BookController {
 
-    private final BookQueryService bookQueryService;
+    private final BookApplicationService bookApplicationService;
 
     @GetMapping
     public PageResult<SearchResponse> search(@Valid SearchCondition condition) {
-        return bookQueryService.search(condition.query(), condition.page(), condition.size());
+        return bookApplicationService.search(condition.query(), condition.page(), condition.size());
     }
 
 }
