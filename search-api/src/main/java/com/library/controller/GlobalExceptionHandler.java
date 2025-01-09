@@ -2,6 +2,7 @@ package com.library.controller;
 
 import com.library.ApiException;
 import com.library.ErrorType;
+import com.library.service.dto.response.ErrorResponse;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
