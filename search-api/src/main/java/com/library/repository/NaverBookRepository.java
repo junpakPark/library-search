@@ -3,7 +3,7 @@ package com.library.repository;
 import com.library.NaverBookResponse;
 import com.library.feign.NaverClient;
 import com.library.service.dto.PageResult;
-import com.library.service.dto.SearchResponse;
+import com.library.service.dto.response.SearchResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

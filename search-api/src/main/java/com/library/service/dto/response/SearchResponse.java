@@ -1,4 +1,4 @@
-package com.library.service.dto;
+package com.library.service.dto.response;
 
 import com.library.Item;
 import com.library.util.DateUtils;

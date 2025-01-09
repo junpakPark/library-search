@@ -1,7 +1,7 @@
 package com.library.repository;
 
 import com.library.service.dto.PageResult;
-import com.library.service.dto.SearchResponse;
+import com.library.service.dto.response.SearchResponse;
 
 public interface BookRepository {
 

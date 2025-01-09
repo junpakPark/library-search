@@ -2,7 +2,7 @@ package com.library.service;
 
 import com.library.repository.BookRepository;
 import com.library.service.dto.PageResult;
-import com.library.service.dto.SearchResponse;
+import com.library.service.dto.response.SearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
