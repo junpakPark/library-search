@@ -7,6 +7,7 @@ import com.library.service.dto.response.SearchResponse;
 import com.library.service.dto.response.StatResponse;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,12 @@ public class BookController {
     ) {
         log.info("[BookController] find stats query ={}, date={}", query, date);
         return bookApplicationService.findQueryCount(query, date);
+    }
+
+    @GetMapping("/stats/ranking")
+    public List<StatResponse> findTop5Stats() {
+        log.info("[BookController] find top 5 stats");
+        return bookApplicationService.findTop5Query();
     }
 
 }

@@ -6,6 +6,7 @@ import com.library.service.dto.response.SearchResponse;
 import com.library.service.dto.response.StatResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,10 @@ public class BookApplicationService {
 
     public StatResponse findQueryCount(final String query, final LocalDate date) {
         return dailyStatQueryService.findQueryCount(query, date);
+    }
+
+    public List<StatResponse> findTop5Query() {
+        return dailyStatQueryService.findTop5Query();
     }
 
 }

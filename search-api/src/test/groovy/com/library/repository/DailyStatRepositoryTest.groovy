@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
@@ -49,7 +50,7 @@ class DailyStatRepositoryTest extends Specification {
     def "쿼리의 카운트를 조회한다."() {
         given:
         def givenQuery = 'HTTP'
-        def now = LocalDateTime.of(2024, 5, 2, 0,0,0)
+        def now = LocalDateTime.of(2024, 5, 2, 0, 0, 0)
         def stat1 = new DailyStat(givenQuery, now.plusMinutes(10))
         def stat2 = new DailyStat(givenQuery, now.minusMinutes(1))
         def stat3 = new DailyStat(givenQuery, now.plusMinutes(10))
@@ -62,6 +63,39 @@ class DailyStatRepositoryTest extends Specification {
 
         then:
         result == 2
+    }
+
+    def "가장 많이 검색된 쿼리 키워드를 개수와 함께 상위 3개반환한다."() {
+        given:
+        def now = LocalDateTime.now()
+        def stats = [
+                new DailyStat('HTTP', now.plusMinutes(10)),
+                new DailyStat('HTTP', now.plusMinutes(10)),
+                new DailyStat('HTTP', now.plusMinutes(10)),
+                new DailyStat('JAVA', now.plusMinutes(10)),
+                new DailyStat('JAVA', now.plusMinutes(10)),
+                new DailyStat('JAVA', now.plusMinutes(10)),
+                new DailyStat('JAVA', now.plusMinutes(10)),
+                new DailyStat('SPRING', now.plusMinutes(10)),
+                new DailyStat('SPRING', now.plusMinutes(10)),
+                new DailyStat('OS', now.plusMinutes(10))
+        ]
+        dailyStatRepository.saveAll(stats)
+
+        when:
+        def request = PageRequest.of(0, 3)
+        def response = dailyStatRepository.findTopQuery(request)
+
+        then:
+        verifyAll {
+            response.size() == 3
+            response[0].query() == 'JAVA'
+            response[0].count() == 4
+            response[1].query() == 'HTTP'
+            response[1].count() == 3
+            response[2].query() == 'SPRING'
+            response[2].count() == 2
+        }
     }
 
 }

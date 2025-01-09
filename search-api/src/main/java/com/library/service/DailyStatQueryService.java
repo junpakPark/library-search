@@ -4,7 +4,9 @@ import com.library.repository.DailyStatRepository;
 import com.library.service.dto.response.StatResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DailyStatQueryService {
+
+    private static final int PAGE = 0;
+    private static final int SIZE = 5;
 
     private final DailyStatRepository dailyStatRepository;
 
@@ -23,6 +28,10 @@ public class DailyStatQueryService {
         );
 
         return new StatResponse(query, count);
+    }
+
+    public List<StatResponse> findTop5Query() {
+        return dailyStatRepository.findTopQuery(PageRequest.of(PAGE, SIZE));
     }
 
 }

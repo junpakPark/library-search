@@ -9,8 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -30,13 +33,31 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ErrorType.INVALID_PARAMETER, createMessage(e)));
     }
 
-    private String createMessage(final BindException e) {
-        if (Objects.nonNull(e.getFieldError()) && Objects.nonNull(e.getFieldError().getDefaultMessage())) {
-            return e.getFieldError().getDefaultMessage();
-        }
-        return e.getFieldErrors().stream()
-                .map(FieldError::getField)
-                .collect(Collectors.joining(",")) + " 값들이 정확하지 않습니다.";
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.error("NoResourceFound Exception occurred. message={}, className={}",
+                e.getMessage(), e.getClass().getName());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ErrorType.NO_RESOURCE, ErrorType.NO_RESOURCE.getDescription()));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException e
+    ) {
+        log.error("MissingServletRequestParameter Exception occurred. parameterName={}, message={}",
+                e.getParameterName(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ErrorType.INVALID_PARAMETER, ErrorType.INVALID_PARAMETER.getDescription()));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException e
+    ) {
+        log.error("MethodArgumentTypeMismatch Exception occurred. message={}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ErrorType.INVALID_PARAMETER, ErrorType.INVALID_PARAMETER.getDescription()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -44,6 +65,15 @@ public class GlobalExceptionHandler {
         log.error("Exception occurred: message={}, className={}", e.getMessage(), e.getClass().getName());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(ErrorType.UNKNOWN, ErrorType.UNKNOWN.getDescription()));
+    }
+
+    private String createMessage(final BindException e) {
+        if (Objects.nonNull(e.getFieldError()) && Objects.nonNull(e.getFieldError().getDefaultMessage())) {
+            return e.getFieldError().getDefaultMessage();
+        }
+        return e.getFieldErrors().stream()
+                .map(FieldError::getField)
+                .collect(Collectors.joining(",")) + " 값들이 정확하지 않습니다.";
     }
 
 }
