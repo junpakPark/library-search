@@ -16,6 +16,7 @@ public class NaverBookRepository implements BookRepository {
 
     @Override
     public PageResult<SearchResponse> search(final String query, final int page, final int size) {
+
         final NaverBookResponse response = naverClient.search(query, size, page);
         final List<SearchResponse> results = response.items().stream()
                 .map(SearchResponse::from)
